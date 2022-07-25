@@ -1,0 +1,11 @@
+[server]
+host = "0.0.0.0"
+port = 3100
+enable_tls = false
+
+[redis]
+redis_url = "redis://localhost:6379/0"
+
+[application]
+log_level = "debug"
+long_url_base = "didcomm://example.com"
