@@ -13,7 +13,6 @@ pub(crate) fn configure_scopes(cfg: &mut web::ServiceConfig) {
         .service(
             web::scope("/internal")
                 .service(internal::shorten)
-                .service(internal::delete)
         )
         .service(
             web::scope("")

@@ -1,7 +1,7 @@
 use crate::error::prelude::*;
 use crate::server::services::Services;
 
-use actix_web::{get, web, HttpResponse, http::{header, StatusCode}, Responder};
+use actix_web::{get, web, HttpResponse, http::{header, StatusCode}};
 use serde_json::Value;
 
 fn send_redirect(long_url: &str) -> SResult<HttpResponse> {

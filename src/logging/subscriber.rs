@@ -8,9 +8,9 @@ use crate::logging::layer_pretty::LayerPretty;
 
 // TODO: Deduplicate
 pub fn get_subscriber_json<Sink>(
-    name: String,
+    _name: String,
     default_env_filter: String,
-    sink: Sink,
+    _sink: Sink,
 ) -> impl Subscriber + Sync + Send
 where
     Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static,
@@ -23,9 +23,9 @@ where
 }
 
 pub fn get_subscriber_pretty<Sink>(
-    name: String,
+    _name: String,
     default_env_filter: String,
-    sink: Sink
+    _sink: Sink
 ) -> impl Subscriber + Sync + Send
 where
     Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static,

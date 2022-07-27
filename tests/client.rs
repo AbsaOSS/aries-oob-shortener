@@ -28,13 +28,13 @@ impl Client {
             .await
     }
 
-    pub async fn post_shorten_link(&self, base_url: &str, msg: &str, expire_in_secs: Option<u32>) -> Result<reqwest::Response, reqwest::Error> {
+    pub async fn post_shorten_link(&self, msg: &str, base_url: Option<&str>, expire_in_secs: Option<u32>) -> Result<reqwest::Response, reqwest::Error> {
         let url = format!("{}/api/internal/shorten-link", self.base_url);
         self.client
             .post(url)
             .json(&serde_json::json!({
-                "base_url": base_url,
                 "msg": msg,
+                "base_url": base_url,
                 "expire_in_secs": expire_in_secs
             }))
             .send()

@@ -25,15 +25,17 @@ impl ServiceShorten {
         Self { redis_client, config }
     }
 
-    pub async fn shorten(&self, base_url: &str, msg: &str, expire_in_secs: Option<u32>) -> SResult<String> {
+    pub async fn shorten(&self, msg: &str, base_url: Option<url::Url>, expire_in_secs: Option<u32>) -> SResult<String> {
         let hash = calculate_hash(msg);
-        let shortened = format!("{}/{}", base_url, hash);
+        let base = base_url.unwrap_or(self.config.application.short_url_base.clone());
+        let shortened = base.join(&hash)
+            .map_err(|err| SError::from_msg(SErrorType::ParsingError, &format!("Failed to construct shortened url, error: {}", err)))?;
         self.redis_client
             .lock()
             .await
             .set(&hash, msg, expire_in_secs)
             .await?;
-        Ok(shortened)
+        Ok(shortened.to_string())
     }
 
     pub async fn get_message(&self, msg_hash: &str) -> SResult<Value> {

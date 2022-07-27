@@ -8,4 +8,5 @@ redis_url = "redis://localhost:6379/0"
 
 [application]
 log_level = "debug"
+short_url_base = "http://sh.local.absa.africa"
 long_url_base = "didcomm://example.com"
