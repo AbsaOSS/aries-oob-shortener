@@ -25,13 +25,13 @@ impl ServiceShorten {
         Self { redis_client, config }
     }
 
-    pub async fn shorten(&self, base_url: &str, msg: &str) -> SResult<String> {
+    pub async fn shorten(&self, base_url: &str, msg: &str, expire_in_secs: Option<u32>) -> SResult<String> {
         let hash = calculate_hash(msg);
         let shortened = format!("{}/{}", base_url, hash);
         self.redis_client
             .lock()
             .await
-            .set(&hash, msg)
+            .set(&hash, msg, expire_in_secs)
             .await?;
         Ok(shortened)
     }

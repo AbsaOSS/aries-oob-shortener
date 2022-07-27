@@ -18,13 +18,27 @@ impl RedisClient {
     }
 
     pub async fn get(&mut self, key: &str) -> SResult<Option<String>> {
-        Ok(self.connection.get(key).await.unwrap())
+        Ok(
+            self.connection
+                .get(key)
+                .await
+                .map_err(|err| SError::from_msg(SErrorType::RedisError, &format!("Failed to get value for key {:?}, error: {:?}", key, err)))?
+        )
     }
 
-    // TODO: Use generics
-    pub async fn set(&mut self, key: &str, value: &str) -> SResult<()> {
-        let _: () = self.connection.set(key, value).await.unwrap();
-        Ok(())
+    pub async fn set(&mut self, key: &str, value: &str, expire_in_secs: Option<u32>) -> SResult<()> {
+        redis::Pipeline::new()
+            .cmd("SET").arg(key).arg(value).ignore()
+            .expire(
+                key,
+                expire_in_secs
+                    .unwrap_or(30 * 60)
+                    .try_into()
+                    .map_err(|err| SError::from_msg(SErrorType::ParsingError, &format!("Failed to convert expiration time to usize, error: {:?}", err)))?
+            )
+            .query_async(&mut self.connection)
+            .await
+            .map_err(|err| SError::from_msg(SErrorType::RedisError, &format!("Failed to set value for key {:?}, error: {:?}", key, err)))
     }
 }
 
@@ -41,10 +55,19 @@ mod test {
     #[tokio::test]
     async fn test_get_set() {
        let mut client = RedisClient::connect("redis://localhost:6379/0").await.unwrap();
-       client.set("abc", "hi").await.unwrap();
+       client.set("abc", "hi", None).await.unwrap();
        let res = client.get("abc").await.unwrap().unwrap();
        assert_eq!(res, "hi");
        let res = client.get("xyz").await.unwrap();
+       assert_eq!(res, None);
+    }
+
+    #[tokio::test]
+    async fn test_expiration() {
+       let mut client = RedisClient::connect("redis://localhost:6379/0").await.unwrap();
+       client.set("def", "hi", Some(1)).await.unwrap();
+       tokio::time::sleep(std::time::Duration::new(2, 0)).await;
+       let res = client.get("def").await.unwrap();
        assert_eq!(res, None);
     }
 

@@ -3,7 +3,7 @@ use crate::utils::setup::init;
 #[tokio::test]
 async fn shorten_works() {
     let setup  = init().await;
-    let response = setup.client.post_shorten_link("http://example.com", &json!({ "key": "value" }).to_string()).await.unwrap();
+    let response = setup.client.post_shorten_link("http://example.com", &json!({ "key": "value" }).to_string(), None).await.unwrap();
 
     assert!(response.status().is_success());
     let response_json: serde_json::Value = response.json().await.unwrap();
