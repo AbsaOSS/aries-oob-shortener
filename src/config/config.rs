@@ -8,6 +8,13 @@ pub struct ApplicationConfig {
 }
 
 #[derive(serde::Deserialize, Clone)]
+pub struct CertificateConfig {
+    pub certificate_path: String,
+    pub certificate_key_path: String,
+    pub certificate_authority_path: String
+}
+
+#[derive(serde::Deserialize, Clone)]
 pub struct RedisConfig {
     pub redis_url: url::Url
 }
@@ -22,8 +29,24 @@ pub struct ServerConfig {
 }
 
 #[derive(serde::Deserialize, Clone)]
+pub struct AwsConfig {
+    pub region: Option<String>,
+    pub s3: S3Config
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct S3Config {
+    pub certificate_bucket: String,
+    pub certificate_path: String,
+    pub certificate_key_path: String,
+    pub certificate_authority_path: String,
+}
+
+#[derive(serde::Deserialize, Clone)]
 pub struct Config {
     pub redis: RedisConfig,
     pub application: ApplicationConfig,
-    pub server: ServerConfig
+    pub server: ServerConfig,
+    pub certs: Option<CertificateConfig>,
+    pub aws: Option<AwsConfig>
 }

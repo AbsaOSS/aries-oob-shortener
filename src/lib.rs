@@ -14,3 +14,4 @@ pub mod server;
 pub mod error;
 pub mod application;
 pub mod setup;
+mod integration;

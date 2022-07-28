@@ -12,6 +12,18 @@ pub struct SError {
     pub kind: SErrorType
 }
 
+#[allow(dead_code)]
+impl SError {
+    pub fn from_msg(kind: SErrorType, msg: &str) -> Self {
+        SError { kind, message: msg.to_string() }
+    }
+
+    pub fn from_kind(kind: SErrorType) -> Self {
+        let message = kind.to_string();
+        SError { kind, message }
+    }
+}
+
 impl error::ResponseError for SError {
     fn error_response(&self) -> HttpResponse {
         HttpResponseBuilder::new(self.status_code())

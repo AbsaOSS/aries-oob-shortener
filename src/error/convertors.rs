@@ -1,16 +1,5 @@
 use crate::error::prelude::*;
-
-#[allow(dead_code)]
-impl SError {
-    pub fn from_msg(kind: SErrorType, msg: &str) -> Self {
-        SError { kind, message: msg.to_string() }
-    }
-
-    pub fn from_kind(kind: SErrorType) -> Self {
-        let message = kind.to_string();
-        SError { kind, message }
-    }
-}
+use aws_sdk_s3::types::SdkError;
 
 impl std::convert::From<serde_json::Error> for SError {
     fn from(err: serde_json::Error) -> SError {
@@ -37,6 +26,26 @@ impl std::convert::From<log::SetLoggerError> for SError {
         let kind = SErrorType::InternalServerError;
         let message = format!(
             "Error initializing logger: {:?}", err.to_string()
+        );
+        SError { message, kind }
+    }
+}
+
+impl<E: std::error::Error> std::convert::From<SdkError<E>> for SError {
+    fn from(err: SdkError<E>) -> SError {
+        let kind = SErrorType::InternalServerError;
+        let message = format!(
+            "AWS SDK S3 Error: {}", err
+        );
+        SError { message, kind }
+    }
+}
+
+impl std::convert::From<std::str::Utf8Error> for SError {
+    fn from(err: std::str::Utf8Error) -> SError {
+        let kind = SErrorType::InternalServerError;
+        let message = format!(
+            "UTF-8 Error: {}", err
         );
         SError { message, kind }
     }

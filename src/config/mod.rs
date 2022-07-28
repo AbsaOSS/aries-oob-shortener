@@ -19,7 +19,7 @@ pub fn load_config() -> SResult<config::Config> {
 
     let config = configrs::Config::builder()
         .add_source(configrs::File::from(configuration_directory.join(&environment_filename)))
-        .add_source(configrs::Environment::with_prefix("SH").prefix_separator("_").separator("__"))
+        .add_source(configrs::Environment::default())
         .build()
         .map_err(|err| SError::from_msg(SErrorType::ConfigurationError, &format!("Failed to build configuration, error: {}", err)))?;
     

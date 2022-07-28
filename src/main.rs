@@ -14,6 +14,7 @@ mod server;
 mod error;
 mod application;
 mod setup;
+mod integration;
 
 use crate::error::prelude::*;
 use crate::logging::init_logger;
