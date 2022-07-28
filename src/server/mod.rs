@@ -19,7 +19,6 @@ fn load_rustls_config() -> rustls::ServerConfig {
     let cert_file = &mut std::io::BufReader::new(std::fs::File::open("certs/cert.pem").unwrap());
     let key_file = &mut std::io::BufReader::new(std::fs::File::open("certs/key.pem").unwrap());
 
-    // convert files to key/cert objects
     let cert_chain = certs(cert_file)
         .unwrap()
         .into_iter()
@@ -43,7 +42,9 @@ pub async fn build_server(config: &mut Config) -> SResult<Server> {
     let address = format!("{}:{}", config.server.host, config.server.port);
     let listener = TcpListener::bind(&address)?;
 
-    config.server.port = listener.local_addr().unwrap().port();
+    config.server.port = listener.local_addr()
+        .map_err(|err| SError::from_msg(SErrorType::IOError, &format!("No available random port found, error: {}", err)))?
+        .port();
 
     let services = web::Data::new(services::build_services(config).await?);
 

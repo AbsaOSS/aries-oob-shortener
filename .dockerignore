@@ -1,0 +1,5 @@
+*.vim
+.dockerignore
+target/
+tests/
+Dockerfile
