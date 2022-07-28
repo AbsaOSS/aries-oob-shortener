@@ -1,4 +1,5 @@
 mod s3;
+mod ecs;
 
 use crate::error::prelude::*;
 use crate::config::{CertificateConfig, AwsConfig};

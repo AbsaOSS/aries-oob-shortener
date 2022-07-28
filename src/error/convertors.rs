@@ -50,3 +50,13 @@ impl std::convert::From<std::str::Utf8Error> for SError {
         SError { message, kind }
     }
 }
+
+impl std::convert::From<reqwest::Error> for SError {
+    fn from(err: reqwest::Error) -> SError {
+        let kind = SErrorType::InternalServerError;
+        let message = format!(
+            "Reqwest Error: {}", err
+        );
+        SError { message, kind }
+    }
+}
