@@ -48,6 +48,7 @@ impl S3Client {
 }
 
 #[cfg(test)]
+#[cfg(feature = "aws_test")]
 mod tests {
     use super::*;
     use crate::logging::init_logger;

@@ -65,6 +65,7 @@ impl ServiceShorten {
 }
 
 #[cfg(test)]
+#[cfg(feature = "unit_test")]
 mod test {
     use super::*;
 

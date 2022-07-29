@@ -49,6 +49,7 @@ impl Debug for RedisClient {
 }
 
 #[cfg(test)]
+#[cfg(feature = "integration_test")]
 mod test {
     use super::*;
 

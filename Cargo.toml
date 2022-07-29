@@ -12,6 +12,12 @@ name = "dlt_shortener"
 path = "src/main.rs"
 name = "dlt_shortener"
 
+[features]
+default = []
+unit_test = []
+aws_test = []
+integration_test = []
+
 [dependencies]
 actix-web = { version = "4.1.0", features = ["rustls"] }
 aws-config = "0.46.0"
