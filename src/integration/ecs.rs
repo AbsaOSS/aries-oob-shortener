@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 use crate::error::prelude::*;
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct EcsTaskMetadata {
     container_id: Option<String>,
     container_name: Option<String>,
