@@ -51,10 +51,7 @@ pub async fn build_server(config: &mut Config) -> SResult<Server> {
     let mut server = HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
-            .service(
-                web::scope("/api")
-                    .configure(configure_scopes)
-            )
+            .configure(configure_scopes)
             .app_data(services.clone())
     });
 

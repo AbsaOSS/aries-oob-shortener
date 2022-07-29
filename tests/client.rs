@@ -42,7 +42,7 @@ impl Client {
     }
 
     pub async fn get_oob_msg(&self, msg_hash: &str) -> Result<reqwest::Response, reqwest::Error> {
-        let url = format!("{}/api/{}", self.base_url, msg_hash);
+        let url = format!("{}/{}", self.base_url, msg_hash);
         self.client
             .get(url)
             .header(reqwest::header::ACCEPT, "application/json")
@@ -51,7 +51,7 @@ impl Client {
     }
 
     pub async fn get_long_url(&self, msg_hash: &str) -> Result<reqwest::Response, reqwest::Error> {
-        let url = format!("{}/api/{}", self.base_url, msg_hash);
+        let url = format!("{}/{}", self.base_url, msg_hash);
         self.client
             .get(url)
             .send()
