@@ -27,7 +27,7 @@ async fn main() -> SResult<()> {
             None 
         }
     };
-    init_logger(true, None, None, ecs_task_metadata)?;
+    init_logger(ecs_task_metadata, Some("dlt-shortener"))?;
     let app = setup::build_application().await?;
     app.run_until_stopped().await
 }

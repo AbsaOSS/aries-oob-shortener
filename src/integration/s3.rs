@@ -55,7 +55,7 @@ mod tests {
 
     #[tokio::test]
     async fn get_s3_data() {
-        init_logger(false, None, None, None).unwrap();
+        init_logger(None, None).unwrap();
         let mut tmp_dir = std::env::temp_dir();
         tmp_dir.push("testfile.txt");
         S3Client::new(S3ClientConfig { region: None })

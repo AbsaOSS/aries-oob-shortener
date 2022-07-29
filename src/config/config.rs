@@ -2,7 +2,6 @@ use serde_aux::field_attributes::{deserialize_number_from_string, deserialize_bo
 
 #[derive(serde::Deserialize, Clone)]
 pub struct ApplicationConfig {
-    pub log_level: String,
     pub short_url_base: url::Url,
     pub long_url_base: url::Url
 }
