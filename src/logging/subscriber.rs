@@ -4,12 +4,12 @@ use tracing::subscriber::set_global_default;
 use tracing::Subscriber;
 use tracing_log::LogTracer;
 use tracing_subscriber::fmt::MakeWriter;
+use tracing_subscriber::fmt;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
 use serde_json::Value;
 
 use crate::logging::layers::layer_json::LayerJson;
 use crate::logging::layers::layer_storage::LayerStorage;
-use crate::logging::layers::layer_pretty::LayerPretty;
 
 // TODO: Deduplicate
 pub fn get_subscriber_json<Sink>(
@@ -40,9 +40,13 @@ where
 {
     let env_filter =
         EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(default_env_filter));
+    let fmt_layer = fmt::layer()
+        .with_target(true)
+        .with_level(true)
+        .compact();
     Registry::default()
         .with(env_filter)
-        .with(LayerPretty)
+        .with(fmt_layer)
 }
 
 pub fn init_subscriber(subscriber: impl Subscriber + Sync + Send) {

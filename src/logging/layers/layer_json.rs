@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::io::Write;
-use std::fmt;
 use std::path::Path;
 use std::ffi::OsStr;
 
@@ -15,17 +14,7 @@ use serde_json::Value;
 use serde::ser::{SerializeMap, Serializer};
 
 use crate::logging::layers::layer_storage::Storage;
-
-const NAME: &str = "name";
-const LEVEL: &str = "level";
-const MESSAGE: &str = "message";
-const MODULE: &str = "module";
-const TARGET: &str = "target";
-const FILENAME: &str = "filename";
-const TIMESTAMP: &str = "timestamp";
-
-const RESERVED_FIELDS: [&str; 7] =
-    [NAME, LEVEL, MESSAGE, MODULE, TARGET, FILENAME, TIMESTAMP];
+use crate::logging::layers::common::{RESERVED_FIELDS, NAME, LEVEL, MESSAGE, MODULE, TARGET, FILENAME, TIMESTAMP, Type};
 
 // TODO: Do we want to format the context like this
 fn format_span_context<S: Subscriber + for<'a> LookupSpan<'a>>(
@@ -56,24 +45,6 @@ fn format_event_message<S: Subscriber + for<'a> LookupSpan<'a>>(
     }
 
     message
-}
-
-#[derive(Clone, Debug)]
-pub enum Type {
-    EnterSpan,
-    ExitSpan,
-    Event,
-}
-
-impl fmt::Display for Type {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let repr = match self {
-            Type::EnterSpan => "START",
-            Type::ExitSpan => "END",
-            Type::Event => "EVENT",
-        };
-        write!(f, "{}", repr)
-    }
 }
 
 pub struct LayerJson<W: for<'a> MakeWriter<'a> + 'static> {

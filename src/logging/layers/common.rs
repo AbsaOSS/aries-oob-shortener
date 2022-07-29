@@ -1,50 +1,30 @@
-use std::collections::BTreeMap;
+use std::fmt;
 
-#[derive(Debug)]
-pub(super) struct CustomFieldStorage(pub BTreeMap<String, serde_json::Value>);
-pub(super) struct JsonVisitor<'a>(pub &'a mut BTreeMap<String, serde_json::Value>);
+pub const NAME: &str = "name";
+pub const LEVEL: &str = "level";
+pub const MESSAGE: &str = "message";
+pub const MODULE: &str = "module";
+pub const TARGET: &str = "target";
+pub const FILENAME: &str = "filename";
+pub const TIMESTAMP: &str = "timestamp";
 
-impl<'a> tracing::field::Visit for JsonVisitor<'a> {
-    fn record_f64(&mut self, field: &tracing::field::Field, value: f64) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
+pub const RESERVED_FIELDS: [&str; 7] =
+    [NAME, LEVEL, MESSAGE, MODULE, TARGET, FILENAME, TIMESTAMP];
 
-    fn record_i64(&mut self, field: &tracing::field::Field, value: i64) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
+#[derive(Clone, Debug)]
+pub enum Type {
+    EnterSpan,
+    ExitSpan,
+    Event,
+}
 
-    fn record_u64(&mut self, field: &tracing::field::Field, value: u64) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_bool(&mut self, field: &tracing::field::Field, value: bool) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_str(&mut self, field: &tracing::field::Field, value: &str) {
-        self.0
-            .insert(field.name().to_string(), serde_json::json!(value));
-    }
-
-    fn record_error(
-        &mut self,
-        field: &tracing::field::Field,
-        value: &(dyn std::error::Error + 'static),
-    ) {
-        self.0.insert(
-            field.name().to_string(),
-            serde_json::json!(value.to_string()),
-        );
-    }
-
-    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
-        self.0.insert(
-            field.name().to_string(),
-            serde_json::json!(format!("{:?}", value)),
-        );
+impl fmt::Display for Type {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let repr = match self {
+            Type::EnterSpan => "START",
+            Type::ExitSpan => "END",
+            Type::Event => "EVENT",
+        };
+        write!(f, "{}", repr)
     }
 }
