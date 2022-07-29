@@ -1,6 +1,8 @@
+use serde::{Serialize, Deserialize};
+
 use crate::error::prelude::*;
 
-#[allow(dead_code)]
+#[derive(Serialize, Deserialize)]
 pub struct EcsTaskMetadata {
     container_id: Option<String>,
     container_name: Option<String>,
@@ -21,7 +23,6 @@ async fn get_ecs_task_metadata(url: &str) -> SResult<reqwest::Response> {
         .map_err(|err| err.into())
 }
 
-#[allow(dead_code)]
 pub async fn fetch_ecs_task_metadata(url: &str) -> SResult<EcsTaskMetadata> {
     let response = get_ecs_task_metadata(url).await?;
     let response_json: serde_json::Value = response.json().await.unwrap();

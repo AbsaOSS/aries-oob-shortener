@@ -1,9 +1,13 @@
 mod s3;
 mod ecs;
 
+use std::collections::HashMap;
+
 use crate::error::prelude::*;
 use crate::config::{CertificateConfig, AwsConfig};
+
 use s3::{S3Client, S3ClientConfig};
+use serde_json::Value;
 
 pub async fn download_certs(cert_config: &CertificateConfig, aws_config: &AwsConfig) -> SResult<()> {
     let client = S3Client::new(S3ClientConfig { region: aws_config.region.clone() }).await?;
@@ -23,4 +27,21 @@ pub async fn download_certs(cert_config: &CertificateConfig, aws_config: &AwsCon
         &cert_config.certificate_authority_path
     ).await?;
     Ok(())
+}
+
+// TODO: There must be a better way to do this
+fn metadata_to_hashmap(metadata: &ecs::EcsTaskMetadata) -> SResult<HashMap<String, Value>> {
+    let temp = serde_json::to_string(metadata).unwrap();
+    let map: HashMap<String, Value> = serde_json::from_str(&temp).unwrap();
+    Ok(map)
+}
+
+pub async fn try_get_ecs_task_metadata() -> SResult<Option<HashMap<String, Value>>> {
+    if let Some(url) = std::env::var("ECS_CONTAINER_METADATA_URI_V4").ok() {
+        let metadata = ecs::fetch_ecs_task_metadata(&url).await?;
+        let map = metadata_to_hashmap(&metadata)?;
+        Ok(Some(map))
+    } else {
+        Ok(None)
+    }
 }

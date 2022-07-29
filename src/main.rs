@@ -21,7 +21,14 @@ use crate::logging::init_logger;
 
 #[actix_web::main]
 async fn main() -> SResult<()> {
-    init_logger(true, None, None)?;
+    let ecs_task_metadata = match integration::try_get_ecs_task_metadata().await {
+        Ok(metadata) => metadata,
+        Err(err) => {
+            warn!("Encountered an error when fetching ECS metadata: {}, ECS metadata will not be used", err);
+            None 
+        }
+    };
+    init_logger(true, None, None, ecs_task_metadata)?;
     let app = setup::build_application().await?;
     app.run_until_stopped().await
 }

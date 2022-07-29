@@ -10,6 +10,7 @@ pub struct Application {
     config: Config
 }
 
+#[allow(dead_code)]
 impl Application {
     pub async fn build(mut config: Config) -> SResult<Self> {
         let server = build_server(&mut config).await?;
@@ -19,5 +20,9 @@ impl Application {
     pub async fn run_until_stopped(self) -> SResult<()> {
         self.server.await
             .map_err(|err| err.into())
+    }
+
+    pub fn config(&self) -> Config {
+        self.config.clone()
     }
 }

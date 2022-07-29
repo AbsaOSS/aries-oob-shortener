@@ -19,7 +19,7 @@ pub struct TestSetup<T> {
 
 pub async fn init() -> TestSetup<Result<(), SError>> {
     TEST_LOGGING_INIT.call_once(|| {
-        init_logger(false, Some("test"), Some("debug")).unwrap();
+        init_logger(false, Some("test"), Some("debug"), None).unwrap();
     });
     let mut app_config = load_config().unwrap(); 
     app_config.server.port = 0;

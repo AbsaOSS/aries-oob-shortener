@@ -31,7 +31,8 @@ serde_json = "1.0.82"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 url = { version = "2.2.2", features = ["serde"] }
 tracing = "0.1.35"
-tracing-subscriber = { version = "0.3.15", features = ["env-filter", "std", "fmt", "json"] }
 tracing-actix-web = "0.6.0"
-tracing-log = "0.1.3"
 tracing-attributes = "0.1.22"
+tracing-core = "0.1.10"
+tracing-log = "0.1.3"
+tracing-subscriber = { version = "0.3.15", features = ["env-filter", "std", "fmt", "json"] }
