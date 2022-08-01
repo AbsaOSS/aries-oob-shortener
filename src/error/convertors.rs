@@ -5,10 +5,7 @@ impl std::convert::From<serde_json::Error> for SError {
     fn from(err: serde_json::Error) -> SError {
         let kind = SErrorType::InternalServerError;
         let message = format!("(De)serialization failed; err: {:?}", err.to_string());
-        SError {
-            message,
-            kind,
-        }
+        SError { message, kind }
     }
 }
 
