@@ -1,0 +1,24 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE} as base
+
+COPY . .
+RUN cargo build --bin dlt_shortener
+
+FROM alpine:3.16.1
+
+ARG UID=1000
+ARG GID=1000
+
+RUN addgroup -g $GID my_group && adduser -u $UID -D -G my_group my_user
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+        g++ \
+        gcc
+
+USER my_user
+WORKDIR /home/my_user
+
+COPY --from=base /home/my_user/target/debug/dlt_shortener dlt_shortener
+
+ENTRYPOINT ["./dlt_shortener"]

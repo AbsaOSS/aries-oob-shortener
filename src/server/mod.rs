@@ -46,16 +46,19 @@ pub async fn build_server(config: &mut Config) -> SResult<Server> {
         .map_err(|err| SError::from_msg(SErrorType::IOError, &format!("No available random port found, error: {}", err)))?
         .port();
 
+    tracing::info!("Building services");
     let services = web::Data::new(services::build_services(config).await?);
 
+    tracing::info!("Configuring server");
     let mut server = HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
-            .configure(configure_scopes)
             .app_data(services.clone())
+            .configure(configure_scopes)
     });
 
     if config.server.enable_tls {
+        tracing::info!("TLS enabled");
         let rustls_config = load_rustls_config();
         server = server.listen_rustls(listener, rustls_config)?;
     } else {

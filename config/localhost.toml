@@ -4,7 +4,7 @@ port = 3100
 enable_tls = false
 
 [redis]
-redis_url = "redis://localhost:6379/0"
+url = "redis://localhost:6379/0"
 
 [application]
 short_url_base = "http://sh.local.absa.africa"

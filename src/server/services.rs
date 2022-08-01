@@ -12,7 +12,7 @@ pub struct Services {
 }
 
 pub async fn build_services(config: &Config) -> SResult<Services> {
-    let redis_client = Arc::new(Mutex::new(RedisClient::connect(config.redis.redis_url.as_str()).await?));
+    let redis_client = Arc::new(Mutex::new(RedisClient::connect(config.redis.url.as_str()).await?));
     let service_shorten = ServiceShorten::new(redis_client.clone(), config.clone());
     Ok(Services {
         service_shorten

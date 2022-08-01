@@ -15,7 +15,7 @@ pub struct CertificateConfig {
 
 #[derive(serde::Deserialize, Clone)]
 pub struct RedisConfig {
-    pub redis_url: url::Url
+    pub url: url::Url
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -43,9 +43,9 @@ pub struct S3Config {
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Config {
-    pub redis: RedisConfig,
-    pub application: ApplicationConfig,
     pub server: ServerConfig,
+    pub application: ApplicationConfig,
+    pub redis: RedisConfig,
     pub certs: Option<CertificateConfig>,
     pub aws: Option<AwsConfig>
 }

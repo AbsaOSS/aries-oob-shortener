@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+  redis:
+    container_name: redis
+    image: ${REDIS_IMAGE:-redis}
+    networks:
+      - absadocker
+    ports:
+      - "6379:6379"
+    command: [ "redis-server" ]
+
+  shortener:
+    image: ${SHORTENER_IMAGE:-dlt-shortener-prod:0.0.1}
+    container_name: dlt-shortener
+    depends_on:
+      - redis
+    environment:
+      - LOG_JSON=false
+      - LOG_LEVEL=info
+      - SERVER__PORT=3100
+      - SERVER__ENABLE_TLS=false
+      - SERVER__HOST=0.0.0.0
+      - APPLICATION__SHORT_URL_BASE=http://dlt-shortener.absadocker:3100
+      - APPLICATION__LONG_URL_BASE=didcomm://example.com
+      - REDIS__URL=redis://redis.absadocker:6379/0
+    networks:
+      - absadocker
+    ports:
+      - "3100:3100"
+
+networks:
+  absadocker:
+    name: absadocker
+    driver: bridge
