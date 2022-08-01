@@ -102,7 +102,7 @@ impl<W: for<'a> MakeWriter<'a> + 'static> LayerJson<W> {
         let mut serializer = serde_json::Serializer::new(&mut buffer);
         let mut map_serializer = serializer.serialize_map(None)?;
         let message = format_span_context(span, ty);
-        self.serialize_core_fields(&mut map_serializer, &message, &span.metadata())?;
+        self.serialize_core_fields(&mut map_serializer, &message, span.metadata())?;
 
         for (key, value) in self.default_fields.iter() {
             if !RESERVED_FIELDS.contains(&key.as_str()) {
@@ -171,7 +171,7 @@ where
             let mut map_serializer = serializer.serialize_map(None)?;
 
             let message = format_event_message(&span, event, &visitor);
-            self.serialize_core_fields(&mut map_serializer, &message, &event.metadata())?;
+            self.serialize_core_fields(&mut map_serializer, &message, event.metadata())?;
 
             for (key, value) in self.default_fields.iter().filter(|(key, _)| {
                 key.as_str() != "message" && !RESERVED_FIELDS.contains(&key.as_str())

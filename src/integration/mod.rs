@@ -51,7 +51,7 @@ fn metadata_to_hashmap(metadata: &ecs::EcsTaskMetadata) -> SResult<HashMap<Strin
 
 #[allow(dead_code)]
 pub async fn try_get_ecs_task_metadata() -> SResult<Option<HashMap<String, Value>>> {
-    if let Some(url) = std::env::var("ECS_CONTAINER_METADATA_URI_V4").ok() {
+    if let Ok(url) = std::env::var("ECS_CONTAINER_METADATA_URI_V4") {
         let metadata = ecs::fetch_ecs_task_metadata(&url).await?;
         let map = metadata_to_hashmap(&metadata)?;
         Ok(Some(map))

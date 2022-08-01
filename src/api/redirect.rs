@@ -13,7 +13,7 @@ fn send_redirect(long_url: &str) -> SResult<HttpResponse> {
         .status(StatusCode::PERMANENT_REDIRECT)
         .append_header((
             header::LOCATION,
-            header::HeaderValue::from_str(&long_url).map_err(|err| {
+            header::HeaderValue::from_str(long_url).map_err(|err| {
                 SError::from_msg(
                     SErrorType::ParsingError,
                     &format!(

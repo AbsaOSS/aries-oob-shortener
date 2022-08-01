@@ -9,7 +9,7 @@ use serde_json::Value;
 
 fn log_json() -> bool {
     match std::env::var("LOG_JSON") {
-        Ok(val) if val.to_lowercase() == "false".to_string() => false,
+        Ok(val) if val.to_lowercase() == *"false" => false,
         Err(_) => false,
         _ => true,
     }

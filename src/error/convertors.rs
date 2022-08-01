@@ -6,7 +6,7 @@ impl std::convert::From<serde_json::Error> for SError {
         let kind = SErrorType::InternalServerError;
         let message = format!("(De)serialization failed; err: {:?}", err.to_string());
         SError {
-            message: message.to_string(),
+            message,
             kind,
         }
     }
