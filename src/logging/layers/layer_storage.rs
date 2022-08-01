@@ -5,8 +5,8 @@ use tracing::field::{Field, Visit};
 use tracing::span::{Attributes, Record};
 use tracing::{Id, Subscriber};
 use tracing_subscriber::layer::Context;
-use tracing_subscriber::Layer;
 use tracing_subscriber::registry::LookupSpan;
+use tracing_subscriber::Layer;
 
 #[derive(Clone, Debug)]
 pub struct LayerStorage;
@@ -57,14 +57,14 @@ impl Visit for Storage<'_> {
     }
 
     fn record_debug(&mut self, field: &Field, value: &dyn fmt::Debug) {
-        self.values
-            .insert(field.name(), serde_json::Value::from(format!("{:?}", value)));
+        self.values.insert(
+            field.name(),
+            serde_json::Value::from(format!("{:?}", value)),
+        );
     }
 }
 
-impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S>
-    for LayerStorage
-{
+impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for LayerStorage {
     fn on_new_span(&self, attrs: &Attributes<'_>, id: &Id, ctx: Context<'_, S>) {
         let span = ctx.span(id).expect("Span not found, this is a bug");
 
@@ -115,9 +115,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S>
         };
 
         #[cfg(not(feature = "arbitrary-precision"))]
-        let elapsed_milliseconds: u64 = {
-            elapsed_milliseconds.try_into().unwrap_or_default()
-        };
+        let elapsed_milliseconds: u64 = { elapsed_milliseconds.try_into().unwrap_or_default() };
 
         let mut extensions_mut = span.extensions_mut();
         let visitor = extensions_mut

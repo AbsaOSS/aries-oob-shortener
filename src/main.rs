@@ -5,15 +5,15 @@ extern crate tracing;
 extern crate serde_json;
 
 mod api;
-mod config;
-mod logging;
-mod service;
-mod storage;
-mod server;
-mod error;
 mod application;
-mod setup;
+mod config;
+mod error;
 mod integration;
+mod logging;
+mod server;
+mod service;
+mod setup;
+mod storage;
 
 use crate::error::prelude::*;
 use crate::logging::init_logger;
@@ -24,7 +24,7 @@ async fn main() -> SResult<()> {
         Ok(metadata) => metadata,
         Err(err) => {
             warn!("Encountered an error when fetching ECS metadata: {}, ECS metadata will not be used", err);
-            None 
+            None
         }
     };
     init_logger(ecs_task_metadata, Some("dlt-shortener"))?;

@@ -2,14 +2,14 @@ pub mod services;
 
 use std::net::TcpListener;
 
-use actix_web::{App, HttpServer, web, dev::Server};
-use tracing_actix_web::TracingLogger;
+use actix_web::{dev::Server, web, App, HttpServer};
 use rustls::{Certificate, PrivateKey};
 use rustls_pemfile::{certs, pkcs8_private_keys};
+use tracing_actix_web::TracingLogger;
 
-use crate::error::prelude::*;
 use crate::api::configure_scopes;
 use crate::config::Config;
+use crate::error::prelude::*;
 
 fn load_rustls_config() -> rustls::ServerConfig {
     let config = rustls::ServerConfig::builder()
@@ -42,8 +42,14 @@ pub async fn build_server(config: &mut Config) -> SResult<Server> {
     let address = format!("{}:{}", config.server.host, config.server.port);
     let listener = TcpListener::bind(&address)?;
 
-    config.server.port = listener.local_addr()
-        .map_err(|err| SError::from_msg(SErrorType::IOError, &format!("No available random port found, error: {}", err)))?
+    config.server.port = listener
+        .local_addr()
+        .map_err(|err| {
+            SError::from_msg(
+                SErrorType::IOError,
+                &format!("No available random port found, error: {}", err),
+            )
+        })?
         .port();
 
     tracing::info!("Building services");

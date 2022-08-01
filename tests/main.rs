@@ -2,6 +2,6 @@
 extern crate serde_json;
 extern crate reqwest;
 
-pub mod client;
 mod api;
+pub mod client;
 mod utils;

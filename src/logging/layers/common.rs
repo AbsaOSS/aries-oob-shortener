@@ -8,8 +8,7 @@ pub const TARGET: &str = "target";
 pub const FILENAME: &str = "filename";
 pub const TIMESTAMP: &str = "timestamp";
 
-pub const RESERVED_FIELDS: [&str; 7] =
-    [NAME, LEVEL, MESSAGE, MODULE, TARGET, FILENAME, TIMESTAMP];
+pub const RESERVED_FIELDS: [&str; 7] = [NAME, LEVEL, MESSAGE, MODULE, TARGET, FILENAME, TIMESTAMP];
 
 #[derive(Clone, Debug)]
 pub enum Type {

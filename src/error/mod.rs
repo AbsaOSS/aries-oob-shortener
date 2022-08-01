@@ -1,6 +1,6 @@
 mod convertors;
-mod error_type;
 mod error;
+mod error_type;
 mod result;
 
 pub mod prelude {

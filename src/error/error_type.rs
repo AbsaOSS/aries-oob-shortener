@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum SErrorType {
@@ -12,7 +12,7 @@ pub enum SErrorType {
     IOError,
     RedisError,
     ConfigurationError,
-    LockError
+    LockError,
 }
 
 impl SErrorType {

@@ -1,20 +1,22 @@
 use std::collections::HashMap;
+use std::ffi::OsStr;
 use std::io::Write;
 use std::path::Path;
-use std::ffi::OsStr;
 
 use chrono::Local;
+use serde::ser::{SerializeMap, Serializer};
+use serde_json::Value;
 use tracing::{Event, Id, Subscriber};
 use tracing_core::metadata::Metadata;
-use tracing_subscriber::Layer;
-use tracing_subscriber::layer::Context;
-use tracing_subscriber::registry::{SpanRef, LookupSpan};
 use tracing_subscriber::fmt::MakeWriter;
-use serde_json::Value;
-use serde::ser::{SerializeMap, Serializer};
+use tracing_subscriber::layer::Context;
+use tracing_subscriber::registry::{LookupSpan, SpanRef};
+use tracing_subscriber::Layer;
 
+use crate::logging::layers::common::{
+    Type, FILENAME, LEVEL, MESSAGE, MODULE, NAME, RESERVED_FIELDS, TARGET, TIMESTAMP,
+};
 use crate::logging::layers::layer_storage::Storage;
-use crate::logging::layers::common::{RESERVED_FIELDS, NAME, LEVEL, MESSAGE, MODULE, TARGET, FILENAME, TIMESTAMP, Type};
 
 // TODO: Do we want to format the context like this
 fn format_span_context<S: Subscriber + for<'a> LookupSpan<'a>>(
@@ -50,12 +52,16 @@ fn format_event_message<S: Subscriber + for<'a> LookupSpan<'a>>(
 pub struct LayerJson<W: for<'a> MakeWriter<'a> + 'static> {
     make_writer: W,
     name: String,
-    default_fields: HashMap<String, Value>
+    default_fields: HashMap<String, Value>,
 }
 
 impl<W: for<'a> MakeWriter<'a> + 'static> LayerJson<W> {
     pub fn new(name: String, make_writer: W, default_fields: HashMap<String, Value>) -> Self {
-        Self { name, make_writer, default_fields }
+        Self {
+            name,
+            make_writer,
+            default_fields,
+        }
     }
 
     fn emit(&self, mut buffer: Vec<u8>) -> Result<(), std::io::Error> {
@@ -70,14 +76,20 @@ impl<W: for<'a> MakeWriter<'a> + 'static> LayerJson<W> {
         metadata: &Metadata,
     ) -> Result<(), std::io::Error> {
         let file_path = metadata.file().unwrap_or("");
-        let filename = Path::new(&file_path).file_name().unwrap_or(OsStr::new("")).to_str();
+        let filename = Path::new(&file_path)
+            .file_name()
+            .unwrap_or(OsStr::new(""))
+            .to_str();
         map_serializer.serialize_entry(NAME, &self.name)?;
         map_serializer.serialize_entry(LEVEL, &metadata.level().to_string().to_lowercase())?;
         map_serializer.serialize_entry(MESSAGE, &message)?;
         map_serializer.serialize_entry(MODULE, &metadata.module_path())?;
         map_serializer.serialize_entry(TARGET, &metadata.target())?;
         map_serializer.serialize_entry(FILENAME, &filename)?;
-        map_serializer.serialize_entry(TIMESTAMP, &Local::now().format("%Y-%m-%d %H:%M.%S").to_string())?;
+        map_serializer.serialize_entry(
+            TIMESTAMP,
+            &Local::now().format("%Y-%m-%d %H:%M.%S").to_string(),
+        )?;
         Ok(())
     }
 
@@ -96,10 +108,7 @@ impl<W: for<'a> MakeWriter<'a> + 'static> LayerJson<W> {
             if !RESERVED_FIELDS.contains(&key.as_str()) {
                 map_serializer.serialize_entry(key, value)?;
             } else {
-                tracing::debug!(
-                    "{} is a reserved field. Skipping it.",
-                    key
-                );
+                tracing::debug!("{} is a reserved field. Skipping it.", key);
             }
         }
 
@@ -109,10 +118,7 @@ impl<W: for<'a> MakeWriter<'a> + 'static> LayerJson<W> {
                 if !RESERVED_FIELDS.contains(key) {
                     map_serializer.serialize_entry(key, value)?;
                 } else {
-                    tracing::debug!(
-                        "{} is a reserved field. Skipping it.",
-                        key
-                    );
+                    tracing::debug!("{} is a reserved field. Skipping it.", key);
                 }
             }
         }
@@ -165,16 +171,11 @@ where
             let mut map_serializer = serializer.serialize_map(None)?;
 
             let message = format_event_message(&span, event, &visitor);
-            self.serialize_core_fields(
-                &mut map_serializer,
-                &message,
-                &event.metadata()
-            )?;
+            self.serialize_core_fields(&mut map_serializer, &message, &event.metadata())?;
 
-            for (key, value) in self.default_fields
-                .iter()
-                .filter(|(key, _)| key.as_str() != "message" && !RESERVED_FIELDS.contains(&key.as_str()))
-            {
+            for (key, value) in self.default_fields.iter().filter(|(key, _)| {
+                key.as_str() != "message" && !RESERVED_FIELDS.contains(&key.as_str())
+            }) {
                 map_serializer.serialize_entry(key, value)?;
             }
 
@@ -193,10 +194,7 @@ where
                         if !RESERVED_FIELDS.contains(key) {
                             map_serializer.serialize_entry(key, value)?;
                         } else {
-                            tracing::debug!(
-                                "{} is a reserved field. Skipping it.",
-                                key
-                            );
+                            tracing::debug!("{} is a reserved field. Skipping it.", key);
                         }
                     }
                 }

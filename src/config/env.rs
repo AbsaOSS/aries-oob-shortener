@@ -1,11 +1,11 @@
 pub enum Env {
-    Local
+    Local,
 }
 
 impl Env {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Env::Local => "localhost"
+            Env::Local => "localhost",
         }
     }
 }

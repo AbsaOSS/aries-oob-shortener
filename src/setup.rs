@@ -1,12 +1,12 @@
-use crate::error::prelude::*;
-use crate::config::load_config;
 use crate::application::Application;
+use crate::config::load_config;
+use crate::error::prelude::*;
 use crate::integration::download_certs;
 
 pub async fn build_application() -> SResult<Application> {
-    let config = load_config()?; 
+    let config = load_config()?;
     if let (Some(cert_config), Some(aws_config)) = (config.certs.clone(), config.aws.clone()) {
-        download_certs(&cert_config, &aws_config).await?; 
+        download_certs(&cert_config, &aws_config).await?;
     };
     Application::build(config).await
 }
