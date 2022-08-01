@@ -1,6 +1,6 @@
 use actix_web::dev::Server;
 
-use crate::config::Config;
+use crate::configuration::Config;
 use crate::error::prelude::*;
 use crate::server::build_server;
 

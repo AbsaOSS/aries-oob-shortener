@@ -1,3 +1,5 @@
+use std::fmt;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -15,20 +17,20 @@ pub enum SErrorType {
     LockError,
 }
 
-impl SErrorType {
-    pub fn to_string(&self) -> String {
+impl fmt::Display for SErrorType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            SErrorType::InternalServerError => String::from("Internal Server Error"),
-            SErrorType::RequestNotAcceptedError => String::from("Request Not Accepted"),
-            SErrorType::NotFoundError => String::from("Not Found"),
-            SErrorType::InvalidJson => String::from("Invalid JSON"),
-            SErrorType::ProtocolError => String::from("Protocol Error"),
-            SErrorType::ParsingError => String::from("Parsing Error"),
-            SErrorType::SerializationError => String::from("Serialization Error"),
-            SErrorType::IOError => String::from("IO Error"),
-            SErrorType::RedisError => String::from("Redis Error"),
-            SErrorType::ConfigurationError => String::from("Configuration Error"),
-            SErrorType::LockError => String::from("Lock Error"),
+            SErrorType::InternalServerError => write!(f, "Internal Server Error"),
+            SErrorType::RequestNotAcceptedError => write!(f, "Request Not Accepted"),
+            SErrorType::NotFoundError => write!(f, "Not Found"),
+            SErrorType::InvalidJson => write!(f, "Invalid JSON"),
+            SErrorType::ProtocolError => write!(f, "Protocol Error"),
+            SErrorType::ParsingError => write!(f, "Parsing Error"),
+            SErrorType::SerializationError => write!(f, "Serialization Error"),
+            SErrorType::IOError => write!(f, "IO Error"),
+            SErrorType::RedisError => write!(f, "Redis Error"),
+            SErrorType::ConfigurationError => write!(f, "Configuration Error"),
+            SErrorType::LockError => write!(f, "Lock Error"),
         }
     }
 }

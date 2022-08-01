@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use tokio::sync::Mutex;
 
-use crate::config::Config;
+use crate::configuration::Config;
 use crate::error::prelude::*;
 use crate::service::ServiceShorten;
 use crate::storage::RedisClient;

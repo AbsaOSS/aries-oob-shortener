@@ -4,7 +4,7 @@ mod s3;
 
 use std::collections::HashMap;
 
-use crate::config::{AwsConfig, CertificateConfig};
+use crate::configuration::{AwsConfig, CertificateConfig};
 use crate::error::prelude::*;
 
 use s3::{S3Client, S3ClientConfig};

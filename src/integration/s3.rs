@@ -18,7 +18,7 @@ pub struct S3Client {
 impl S3Client {
     pub async fn new(config: S3ClientConfig) -> SResult<Self> {
         let S3ClientConfig { region } = config.clone();
-        let region = region.unwrap_or("eu-west-1".into());
+        let region = region.unwrap_or_else(|| "eu-west-1".into());
         let region_provider = RegionProviderChain::first_try(Region::new(region.clone()))
             .or_default_provider()
             .or_else(Region::new(region.clone()));

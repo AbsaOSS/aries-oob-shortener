@@ -7,7 +7,7 @@ extern crate serde_json;
 
 mod api;
 pub mod application;
-pub mod config;
+pub mod configuration;
 pub mod error;
 mod integration;
 pub mod logging;

@@ -1,5 +1,5 @@
 use crate::application::Application;
-use crate::config::load_config;
+use crate::configuration::load_config;
 use crate::error::prelude::*;
 use crate::integration::download_certs;
 

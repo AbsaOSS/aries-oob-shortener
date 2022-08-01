@@ -11,7 +11,7 @@ use tracing_subscriber::Layer;
 #[derive(Clone, Debug)]
 pub struct LayerStorage;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Storage<'a> {
     values: HashMap<&'a str, serde_json::Value>,
 }
@@ -19,14 +19,6 @@ pub struct Storage<'a> {
 impl<'a> Storage<'a> {
     pub fn values(&self) -> &HashMap<&'a str, serde_json::Value> {
         &self.values
-    }
-}
-
-impl Default for Storage<'_> {
-    fn default() -> Self {
-        Self {
-            values: HashMap::new(),
-        }
     }
 }
 

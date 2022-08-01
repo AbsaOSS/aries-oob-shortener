@@ -78,7 +78,7 @@ impl<W: for<'a> MakeWriter<'a> + 'static> LayerJson<W> {
         let file_path = metadata.file().unwrap_or("");
         let filename = Path::new(&file_path)
             .file_name()
-            .unwrap_or(OsStr::new(""))
+            .unwrap_or_else(|| OsStr::new(""))
             .to_str();
         map_serializer.serialize_entry(NAME, &self.name)?;
         map_serializer.serialize_entry(LEVEL, &metadata.level().to_string().to_lowercase())?;

@@ -8,7 +8,7 @@ use rustls_pemfile::{certs, pkcs8_private_keys};
 use tracing_actix_web::TracingLogger;
 
 use crate::api::configure_scopes;
-use crate::config::Config;
+use crate::configuration::Config;
 use crate::error::prelude::*;
 
 fn load_rustls_config() -> rustls::ServerConfig {

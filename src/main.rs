@@ -6,7 +6,7 @@ extern crate serde_json;
 
 mod api;
 mod application;
-mod config;
+mod configuration;
 mod error;
 mod integration;
 mod logging;

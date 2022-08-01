@@ -5,7 +5,7 @@ use std::sync::Arc;
 use serde_json::Value;
 use tokio::sync::Mutex;
 
-use crate::config::Config;
+use crate::configuration::Config;
 use crate::error::prelude::*;
 use crate::storage::RedisClient;
 
@@ -35,7 +35,7 @@ impl ServiceShorten {
         expire_in_secs: Option<u32>,
     ) -> SResult<String> {
         let hash = calculate_hash(msg);
-        let base = base_url.unwrap_or(self.config.application.short_url_base.clone());
+        let base = base_url.unwrap_or_else(|| self.config.application.short_url_base.clone());
         let shortened = base.join(&hash).map_err(|err| {
             SError::from_msg(
                 SErrorType::ParsingError,

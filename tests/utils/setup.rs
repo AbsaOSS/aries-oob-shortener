@@ -3,7 +3,7 @@ use std::sync::Once;
 use tokio::task::JoinHandle;
 
 use dlt_shortener::application::Application;
-use dlt_shortener::config::{load_config, Config};
+use dlt_shortener::configuration::{load_config, Config};
 use dlt_shortener::error::prelude::*;
 use dlt_shortener::logging::init_logger;
 
