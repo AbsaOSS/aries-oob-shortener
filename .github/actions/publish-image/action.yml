@@ -1,0 +1,36 @@
+name: Publish docker image
+
+inputs:
+  docker-img-name: 
+    description: 'Name of the docker image'
+    required: true
+  publish-version: 
+    description: 'Version of the image to be published'
+    required: true
+
+env:
+  DOCKER_BUILDKIT: 1
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build and publish image
+      env:
+        DOCKER_IMG_NAME: ${{ inputs.docker-img-name }}
+        PUBLISH_VERSION: ${{ inputs.publish-version }}
+      run: |
+        if [[ "$PUBLISH_VERSION" ]]
+        then
+          ./ci/build.prod.sh "$DOCKER_IMG_NAME" "$PUBLISH_VERSION"
+
+          IFS=$':' read -a arr <<< $DOCKER_IMG_NAME
+          GITHUB_REPOSITORY_LOWERCASE=`echo $GITHUB_REPOSITORY | awk '{print tolower($0)}'`
+          FULL_DOCKER_IMG_NAME=${DOCKER_IMG_NAME}:${PUBLISH_VERSION}
+          REMOTE_DOCKER_IMG_NAME="ghcr.io/${GITHUB_REPOSITORY_LOWERCASE}/${FULL_DOCKER_IMG_NAME}"
+          echo "Releasing docker image version $PUBLISH_VERSION, tagged $REMOTE_DOCKER_IMG_NAME"
+          docker tag "$FULL_DOCKER_IMG_NAME" "$REMOTE_DOCKER_IMG_NAME"
+          docker push "$REMOTE_DOCKER_IMG_NAME"
+        else
+           echo "Version to publish was not defined, skipping image publishing."
+        fi
+      shell: bash

@@ -19,7 +19,7 @@ runs:
       run: |
         if [[ -z "$GITHUB_HEAD_REF" ]]; then # is set only if pipeline run is triggered as pull request
           BRANCH_NAME="${GITHUB_REF#refs/heads/}"
-          echo "Setting BRANCH_NAME=$BRANCH_NAME because this pipeline is run as Push"
+          echo "Setting BRANCH_NAME=$BRANCH_NAME because this pipeline is run as push"
         else
           BRANCH_NAME=$GITHUB_HEAD_REF
           echo "Setting BRANCH_NAME=$BRANCH_NAME because this pipeline is run as Pull Request"
