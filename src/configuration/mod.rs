@@ -36,7 +36,7 @@ pub fn load_config() -> SResult<config::Config> {
         None => {
             tracing::info!("App configuration will be loaded from environment variables");
             configrs::Config::builder()
-                .add_source(configrs::Environment::default().separator("__"))
+                .add_source(configrs::Environment::default().separator("::"))
                 .build()
                 .map_err(|err| {
                     SError::from_msg(
