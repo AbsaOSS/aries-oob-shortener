@@ -77,7 +77,8 @@ impl ServiceShorten {
         })?;
         let encoded = base64::encode(&msg);
         let mut long = self.config.application.long_url_base.clone();
-        long.set_path(&encoded);
+        long.set_path("ssi");
+        long.set_query(Some(&format!("oob={}", encoded)));
         Ok(long.to_string())
     }
 }
