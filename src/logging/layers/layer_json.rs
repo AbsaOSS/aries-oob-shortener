@@ -34,11 +34,10 @@ fn format_event_message<S: Subscriber + for<'a> LookupSpan<'a>>(
     let mut message = visitor
         .values()
         .get("message")
-        .map(|v| match v {
+        .and_then(|v| match v {
             Value::String(s) => Some(s.as_str()),
             _ => None,
         })
-        .flatten()
         .unwrap_or_else(|| event.metadata().target())
         .to_owned();
 

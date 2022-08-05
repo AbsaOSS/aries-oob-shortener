@@ -3,7 +3,7 @@ version: '3.5'
 services:
   redis:
     container_name: redis
-    image: ${REDIS_IMAGE:-redis}
+    image: ${REDIS_IMAGE:-redis:7.0.4}
     networks:
       - absadocker
     ports:

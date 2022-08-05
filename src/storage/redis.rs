@@ -24,12 +24,12 @@ impl RedisClient {
     }
 
     pub async fn get(&mut self, key: &str) -> SResult<Option<String>> {
-        Ok(self.connection.get(key).await.map_err(|err| {
+        self.connection.get(key).await.map_err(|err| {
             SError::from_msg(
                 SErrorType::RedisError,
                 &format!("Failed to get value for key {:?}, error: {:?}", key, err),
             )
-        })?)
+        })
     }
 
     pub async fn set(
