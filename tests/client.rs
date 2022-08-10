@@ -1,13 +1,15 @@
 pub struct ClientConfig {
     pub host: String,
-    pub port: u16,
+    pub port_internal: u16,
+    pub port_external: u16,
 }
 
 #[allow(dead_code)]
 pub struct Client {
     client: reqwest::Client,
     config: ClientConfig,
-    base_url: String,
+    base_url_internal: String,
+    base_url_external: String,
 }
 
 impl Client {
@@ -15,16 +17,23 @@ impl Client {
         let client = reqwest::Client::builder()
             .redirect(reqwest::redirect::Policy::none())
             .build()?;
-        let base_url = format!("http://{}:{}", config.host, config.port);
+        let base_url_internal = format!("http://{}:{}", config.host, config.port_internal);
+        let base_url_external = format!("http://{}:{}", config.host, config.port_external);
         Ok(Self {
             client,
             config,
-            base_url,
+            base_url_internal,
+            base_url_external,
         })
     }
 
-    pub async fn get_healthcheck(&self) -> Result<reqwest::Response, reqwest::Error> {
-        let url = format!("{}/api/health", self.base_url);
+    pub async fn get_healthcheck_internal(&self) -> Result<reqwest::Response, reqwest::Error> {
+        let url = format!("{}/api/health", self.base_url_internal);
+        self.client.get(url).send().await
+    }
+
+    pub async fn get_healthcheck_external(&self) -> Result<reqwest::Response, reqwest::Error> {
+        let url = format!("{}/api/health", self.base_url_external);
         self.client.get(url).send().await
     }
 
@@ -34,7 +43,7 @@ impl Client {
         base_url: Option<&str>,
         expire_in_secs: Option<u32>,
     ) -> Result<reqwest::Response, reqwest::Error> {
-        let url = format!("{}/api/internal/shorten-link", self.base_url);
+        let url = format!("{}/api/internal/shorten-link", self.base_url_internal);
         self.client
             .post(url)
             .json(&serde_json::json!({
@@ -47,7 +56,7 @@ impl Client {
     }
 
     pub async fn get_oob_msg(&self, msg_hash: &str) -> Result<reqwest::Response, reqwest::Error> {
-        let url = format!("{}/{}", self.base_url, msg_hash);
+        let url = format!("{}/{}", self.base_url_external, msg_hash);
         self.client
             .get(url)
             .header(reqwest::header::ACCEPT, "application/json")
@@ -56,7 +65,7 @@ impl Client {
     }
 
     pub async fn get_long_url(&self, msg_hash: &str) -> Result<reqwest::Response, reqwest::Error> {
-        let url = format!("{}/{}", self.base_url, msg_hash);
+        let url = format!("{}/{}", self.base_url_external, msg_hash);
         self.client.get(url).send().await
     }
 }

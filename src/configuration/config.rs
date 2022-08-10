@@ -43,7 +43,8 @@ pub struct S3Config {
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Config {
-    pub server: ServerConfig,
+    pub server_internal: ServerConfig,
+    pub server_external: ServerConfig,
     pub application: ApplicationConfig,
     pub redis: RedisConfig,
     pub certs: Option<CertificateConfig>,

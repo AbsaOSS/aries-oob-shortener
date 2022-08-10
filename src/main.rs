@@ -30,5 +30,5 @@ async fn main() -> SResult<()> {
     init_logger(ecs_task_metadata, Some("dlt-shortener"))?;
     tracing::info!("Logger initialized");
     let app = setup::build_application().await?;
-    app.run_until_stopped().await
+    app.run_until_stopped().await.map(|res| res.0)
 }

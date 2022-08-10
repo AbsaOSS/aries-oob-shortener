@@ -18,16 +18,20 @@ services:
     environment:
       - LOG_JSON=false
       - LOG_LEVEL=info
-      - SERVER::PORT=3100
-      - SERVER::ENABLE_TLS=false
-      - SERVER::HOST=0.0.0.0
-      - APPLICATION::SHORT_URL_BASE=http://dlt-shortener.absadocker:3100
+      - SERVER_INTERNAL::PORT=3100
+      - SERVER_INTERNAL::ENABLE_TLS=false
+      - SERVER_INTERNAL::HOST=0.0.0.0
+      - SERVER_EXTERNAL::PORT=3101
+      - SERVER_EXTERNAL::ENABLE_TLS=false
+      - SERVER_EXTERNAL::HOST=0.0.0.0
+      - APPLICATION::SHORT_URL_BASE=http://dlt-shortener.absadocker:3101
       - APPLICATION::LONG_URL_BASE=didcomm://example.com
       - REDIS::URL=redis://redis.absadocker:6379/0
     networks:
       - absadocker
     ports:
       - "3100:3100"
+      - "3101:3101"
 
 networks:
   absadocker:

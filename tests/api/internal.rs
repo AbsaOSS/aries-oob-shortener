@@ -1,6 +1,6 @@
 use crate::utils::setup::{init, TestSetup};
 
-async fn test_shortening<T>(setup: &TestSetup<T>, base: Option<&str>) -> serde_json::Value {
+async fn test_shortening(setup: &TestSetup, base: Option<&str>) -> serde_json::Value {
     let response = setup
         .client
         .post_shorten_link(&json!({ "key": "value" }).to_string(), base, None)
