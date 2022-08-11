@@ -30,7 +30,7 @@ pub async fn build_server_external(config: &mut Config) -> SResult<Server> {
     tracing::info!("Building services");
     let services = web::Data::new(build_services(config).await?);
 
-    tracing::info!("Configuring internal server");
+    tracing::info!("Configuring external server");
     let mut server = HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
@@ -38,11 +38,15 @@ pub async fn build_server_external(config: &mut Config) -> SResult<Server> {
             .configure(scopes::configure_scopes_external)
     });
 
-    if config.server_external.enable_tls {
+    if let Some(cert_config) = &config.server_external.certs {
         tracing::info!("TLS enabled");
-        let rustls_config = load_rustls_config();
+        let rustls_config = load_rustls_config(
+            &cert_config.certificate_path,
+            &cert_config.certificate_key_path,
+        );
         server = server.listen_rustls(listener, rustls_config)?;
     } else {
+        tracing::info!("TLS disabled");
         server = server.listen(listener)?;
     };
 

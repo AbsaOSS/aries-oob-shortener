@@ -38,11 +38,15 @@ pub async fn build_server_internal(config: &mut Config) -> SResult<Server> {
             .configure(scopes::configure_scopes_internal)
     });
 
-    if config.server_internal.enable_tls {
+    if let Some(cert_config) = &config.server_internal.certs {
         tracing::info!("TLS enabled");
-        let rustls_config = load_rustls_config();
+        let rustls_config = load_rustls_config(
+            &cert_config.certificate_path,
+            &cert_config.certificate_key_path,
+        );
         server = server.listen_rustls(listener, rustls_config)?;
     } else {
+        tracing::info!("TLS disabled");
         server = server.listen(listener)?;
     };
 

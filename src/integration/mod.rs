@@ -32,13 +32,6 @@ pub async fn download_certs(
             &cert_config.certificate_key_path,
         )
         .await?;
-    client
-        .get_object(
-            &aws_config.s3.certificate_bucket,
-            &aws_config.s3.certificate_authority_path,
-            &cert_config.certificate_authority_path,
-        )
-        .await?;
     Ok(())
 }
 

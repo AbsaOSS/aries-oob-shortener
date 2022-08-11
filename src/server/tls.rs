@@ -1,13 +1,13 @@
 use rustls::{Certificate, PrivateKey};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 
-pub fn load_rustls_config() -> rustls::ServerConfig {
+pub fn load_rustls_config(cert_path: &str, key_path: &str) -> rustls::ServerConfig {
     let config = rustls::ServerConfig::builder()
         .with_safe_defaults()
         .with_no_client_auth();
 
-    let cert_file = &mut std::io::BufReader::new(std::fs::File::open("certs/cert.pem").unwrap());
-    let key_file = &mut std::io::BufReader::new(std::fs::File::open("certs/key.pem").unwrap());
+    let cert_file = &mut std::io::BufReader::new(std::fs::File::open(cert_path).unwrap());
+    let key_file = &mut std::io::BufReader::new(std::fs::File::open(key_path).unwrap());
 
     let cert_chain = certs(cert_file)
         .unwrap()
