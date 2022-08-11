@@ -1,5 +1,5 @@
 use crate::error::prelude::*;
-use crate::server::services::Services;
+use crate::service::Services;
 
 use actix_web::{post, web};
 
