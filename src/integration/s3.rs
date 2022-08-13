@@ -1,8 +1,8 @@
+use std::fs;
+use std::path::Path;
+
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::{Client, Region};
-
-use std::fs::File;
-use std::io::Write;
 
 use crate::error::prelude::*;
 
@@ -47,8 +47,13 @@ impl S3Client {
                 )
             })?
             .into_bytes();
-        let mut file = File::create(path)?;
-        file.write_all(&bytes)?;
+
+        let path = Path::new(path);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?;
+        };
+        fs::write(path, &bytes)?;
+
         Ok(())
     }
 }
@@ -58,22 +63,27 @@ impl S3Client {
 mod tests {
     use super::*;
     use crate::logging::init_logger;
+    use tempdir::TempDir;
 
     #[tokio::test]
     async fn get_s3_data() {
         init_logger(None, None).unwrap();
-        let mut tmp_dir = std::env::temp_dir();
-        tmp_dir.push("testfile.txt");
+        let path = TempDir::new("")
+            .unwrap()
+            .path()
+            .join("testdir")
+            .join("testfile.txt");
+        assert!(!path.exists());
         S3Client::new(S3ClientConfig { region: None })
             .await
             .unwrap()
             .get_object(
                 "ctoblockchaindev-euw1-dev-dlt-localhost",
                 "testread/testfile.txt",
-                tmp_dir.to_str().unwrap(),
+                path.to_str().unwrap(),
             )
             .await
             .unwrap();
-        assert!(tmp_dir.exists());
+        assert!(path.exists());
     }
 }
