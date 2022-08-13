@@ -63,12 +63,12 @@ impl S3Client {
 mod tests {
     use super::*;
     use crate::logging::init_logger;
-    use tempdir::TempDir;
+    use tempfile::tempdir;
 
     #[tokio::test]
     async fn get_s3_data() {
         init_logger(None, None).unwrap();
-        let path = TempDir::new("")
+        let path = tempdir()
             .unwrap()
             .path()
             .join("testdir")
