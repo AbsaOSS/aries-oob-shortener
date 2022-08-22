@@ -20,6 +20,15 @@ fn calculate_hash<T: Hash>(t: T) -> String {
     format!("{:x}", s.finish())
 }
 
+fn deserialize_oob_msg(msg: &str) -> SResult<Value> {
+    serde_json::from_str::<Value>(msg).map_err(|err| {
+        SError::from_msg(
+            SErrorType::ParsingError,
+            &format!("Failed to deserialize OOB msg {}, error: {}", msg, err),
+        )
+    })
+}
+
 impl ServiceShorten {
     pub fn new(redis_client: Arc<Mutex<RedisClient>>, config: Config) -> Self {
         Self {
@@ -34,6 +43,7 @@ impl ServiceShorten {
         base_url: Option<url::Url>,
         expire_in_secs: Option<u32>,
     ) -> SResult<String> {
+        deserialize_oob_msg(msg)?;
         let hash = calculate_hash(msg);
         let base = base_url.unwrap_or_else(|| self.config.application.short_url_base.clone());
         let shortened = base.join(&hash).map_err(|err| {
@@ -53,12 +63,7 @@ impl ServiceShorten {
     pub async fn get_message(&self, msg_hash: &str) -> SResult<Value> {
         let msg = self.redis_client.lock().await.get(msg_hash).await?;
         if let Some(msg) = msg {
-            Ok(serde_json::from_str::<Value>(&msg).map_err(|err| {
-                SError::from_msg(
-                    SErrorType::ParsingError,
-                    &format!("Failed to deserialize OOB msg {}, error: {}", msg, err),
-                )
-            })?)
+            deserialize_oob_msg(&msg)
         } else {
             Err(SError::from_msg(
                 SErrorType::NotFoundError,
