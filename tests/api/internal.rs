@@ -53,7 +53,7 @@ async fn shorten_works() {
     assert_eq!(response.status(), reqwest::StatusCode::PERMANENT_REDIRECT);
     let location_header = response.headers().get("location").unwrap();
     assert_eq!(
-        "didcomm://example.com/ssi?oob=eyJrZXkiOiJ2YWx1ZSJ9",
+        "didcomm://example.com?oob=eyJrZXkiOiJ2YWx1ZSJ9",
         location_header
     );
 }
