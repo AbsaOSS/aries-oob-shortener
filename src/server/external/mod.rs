@@ -33,8 +33,8 @@ pub async fn build_server_external(config: &mut Config) -> SResult<Server> {
     tracing::info!("Configuring external server");
     let mut server = HttpServer::new(move || {
         App::new()
-            .wrap(Logger::default())
             .wrap(TracingLogger::default())
+            .wrap(Logger::default().exclude_regex("/health"))
             .app_data(services.clone())
             .configure(scopes::configure_scopes_external)
     });
