@@ -2,7 +2,7 @@ mod scopes;
 
 use std::net::TcpListener;
 
-use actix_web::{dev::Server, web, App, HttpServer};
+use actix_web::{dev::Server, middleware::Logger, web, App, HttpServer};
 use tracing_actix_web::TracingLogger;
 
 use crate::configuration::Config;
@@ -33,6 +33,7 @@ pub async fn build_server_external(config: &mut Config) -> SResult<Server> {
     tracing::info!("Configuring external server");
     let mut server = HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .wrap(TracingLogger::default())
             .app_data(services.clone())
             .configure(scopes::configure_scopes_external)
