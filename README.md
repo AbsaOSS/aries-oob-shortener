@@ -12,7 +12,7 @@ APP_CONFIG=localhost cargo run
 ```
 To run unit and integration tests:
 ```
-APP_CONFIG=localhost cargo test --features "unit_test integration_test"
+RUST_TEST_THREADS=1 APP_CONFIG=localhost cargo test --features "unit_test integration_test"
 ```
 
 ## API

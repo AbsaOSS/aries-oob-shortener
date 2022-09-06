@@ -68,6 +68,13 @@ impl ServiceShorten {
                 &format!("Failed to construct shortened url, error: {}", err),
             )
         })?;
+        let expire_in_secs = if expire_in_secs.is_some() {
+            expire_in_secs
+        } else if self.config.application.default_expire_in_sec.is_some() {
+            self.config.application.default_expire_in_sec
+        } else {
+            None
+        };
         self.redis_client
             .lock()
             .await

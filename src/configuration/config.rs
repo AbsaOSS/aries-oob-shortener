@@ -20,6 +20,7 @@ use serde_aux::field_attributes::deserialize_number_from_string;
 pub struct ApplicationConfig {
     pub short_url_base: url::Url,
     pub long_url_base: url::Url,
+    pub default_expire_in_sec: Option<u32>,
 }
 
 #[derive(serde::Deserialize, Clone)]
