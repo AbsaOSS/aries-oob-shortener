@@ -34,7 +34,7 @@ Shortens given Out-of-Band message.
     * *type*: string
   * **expire_in_secs**
     * *description*: expiration time of the shortened URL in seconds
-    * *default*: no expiration
+    * *default*: value preconfigured in `APPLICATION::DEFAULT_EXPIRE_IN_SEC` (if any, else no expiration)
     * *required*: false
     * *type*: positive integer
 
