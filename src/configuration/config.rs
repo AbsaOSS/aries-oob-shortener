@@ -16,14 +16,14 @@
 
 use serde_aux::field_attributes::deserialize_number_from_string;
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct ApplicationConfig {
     pub short_url_base: url::Url,
     pub long_url_base: url::Url,
     pub default_expire_in_sec: Option<u32>,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct ServerConfig {
     pub host: String,
     #[serde(deserialize_with = "deserialize_number_from_string")]
@@ -32,31 +32,31 @@ pub struct ServerConfig {
     pub aws: Option<AwsConfig>,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct CertificateConfig {
     pub certificate_path: String,
     pub certificate_key_path: String,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct S3Config {
     pub certificate_bucket: String,
     pub certificate_path: String,
     pub certificate_key_path: String,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct AwsConfig {
     pub region: Option<String>,
     pub s3: S3Config,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct RedisConfig {
     pub url: url::Url,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct Config {
     pub server_internal: ServerConfig,
     pub server_external: ServerConfig,

@@ -33,6 +33,7 @@ pub async fn build_services(config: &Config) -> SResult<Services> {
     let redis_client = Arc::new(Mutex::new(
         RedisClient::connect(config.redis.url.as_str()).await?,
     ));
+    info!("Building service layer with application config: {}, redis config: {}", json!(config.application), json!(config.redis));
     let service_shorten = ServiceShorten::new(redis_client, config.clone());
     Ok(Services { service_shorten })
 }

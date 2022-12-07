@@ -23,7 +23,7 @@ use ::config as configrs;
 
 use crate::error::prelude::*;
 
-pub fn load_config() -> SResult<config::Config> {
+pub fn load_config() -> SResult<Config> {
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("config");
 
@@ -63,7 +63,7 @@ pub fn load_config() -> SResult<config::Config> {
         }
     };
 
-    config.try_deserialize::<config::Config>().map_err(|err| {
+    config.try_deserialize::<Config>().map_err(|err| {
         SError::from_msg(
             SErrorType::ParsingError,
             &format!("Failed to deserialize Config, error: {}", err),
