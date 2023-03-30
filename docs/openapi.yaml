@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: Shortened Link API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3100
+    description: Internal API
+  - url: http://localhost:3101
+    description: External API
+paths:
+  /api/internal/shorten-link:
+    post:
+      tags:
+        - Internal API
+      summary: Creates short URL from Aries OOB message
+      description: |
+        Given OOB message JSON message, produces short URL which is expected to point to endpoint http://localhost:3101/{msg_hash} which can be used to retrieve the supplied OOB message.
+      operationId: shortenLink
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - msg
+              properties:
+                msg:
+                  type: string
+                  description: JSON Aries OOB message which shall be converted to shortened URL
+                  example: "{ \"@id\":\"11111111-2222-3333-4444-444444444444\", \"@type\":\"https://didcomm.org/out-of-band/1.1/invitation\", \"handshake_protocols\":[ \"https://didcomm.org/connections/1.0\" ], \"services\":[ \"C279iyCR8wtKiPC8o9iabc\" ], \"requests~attach\":[] }"
+                base_url:
+                  type: string
+                  description: Base URL of the shortened message which should resolve into the External API of this service
+                  default: value preconfigured in `APPLICATION::SHORT_URL_BASE` config field
+                  example: "http://localhost:3101"
+                expire_in_secs:
+                  type: integer
+                  format: int32
+                  description: Expiration time of the shortened URL (in seconds)
+                  default: value preconfigured in `APPLICATION::DEFAULT_EXPIRE_IN_SEC` (if any, else no expiration)
+                  example: 600
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shortened_url:
+                    type: string
+                    description: The shortened URL
+  /{msg_hash}:
+    get:
+      tags:
+        - External API
+      summary: Returns the content of the shortened message hashing to `msg_hash`, if it is not-expired and exists
+      description: |
+        Either redirects to long url with theOOB message encoded as URL query parameter, or alternatively returns the content of the OOB message in the response body.
+        
+        More details in Aries OOB shortening specification https://github.com/hyperledger/aries-rfcs/blob/main/features/0434-outofband/README.md#url-shortening
+      operationId: getMessage
+      parameters:
+        - name: msg_hash
+          in: path
+          description: The hash of the shortened message
+          required: true
+          schema:
+            type: string
+      responses:
+        308:
+          description: Permanent Redirect, Location header containing the message JSON encoded in base64
+          headers:
+            Location:
+              schema:
+                type: string
+              description: The JSON encoded message in base64
+        200:
+          description: Shortened message in the JSON format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: The original message
+        404:
+          description: Not Found
