@@ -43,10 +43,7 @@ pub async fn build_server_internal(config: &mut Config) -> SResult<Server> {
         })?
         .port();
 
-    tracing::info!("Building services");
     let services = web::Data::new(build_services(config).await?);
-
-    tracing::info!("Configuring internal server");
     let mut server = HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
@@ -56,16 +53,17 @@ pub async fn build_server_internal(config: &mut Config) -> SResult<Server> {
     });
 
     if let Some(cert_config) = &config.server_internal.certs {
-        tracing::info!("TLS enabled");
+        tracing::info!("Internal server: TLS enabled");
         let rustls_config = load_rustls_config(
             &cert_config.certificate_path,
             &cert_config.certificate_key_path,
         );
         server = server.listen_rustls(listener, rustls_config)?;
     } else {
-        tracing::info!("TLS disabled");
+        tracing::info!("Internal server: TLS disabled");
         server = server.listen(listener)?;
     };
 
+    tracing::info!("Internal server: Starting with config: {:?}", config.server_internal);
     Ok(server.run())
 }
